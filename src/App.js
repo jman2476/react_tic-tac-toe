@@ -76,5 +76,9 @@ function calculateWinner(squares) {
         }
     }
 
-    return null
+    for (let i = 0; i < squares.length; i++){
+        if (!squares[i]) return null
+
+    }
+    return 'Nobody'
 }
