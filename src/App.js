@@ -37,7 +37,7 @@ function Board({ xIsNext, squares, onPlay}) {
         const newRow = Array(3).fill().map((_, column) => {
             const squareIndex = index * 3 + column
             return (
-                <Square value={squares[squareIndex]} onSquareClick={() => handleClick(squareIndex)}/>
+                <Square key={squareIndex} value={squares[squareIndex]} onSquareClick={() => handleClick(squareIndex)}/>
             )
         })
         
