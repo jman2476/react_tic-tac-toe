@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react'
 
+/* TODO: Add updates to the game:
+    1. For current move, show "You are at move #" instead of button
+    2. Rewrite Board component to render using two loops instead of hardcoding squares
+    3. Toggle button for ascending/descending move list
+    4. When someone wins, highlight the winning squares
+    5. Display coordinates for each move in move history list
+    6. Make it pretty and personal
+*/
 function Square({ value, onSquareClick }) {
 
     return (
