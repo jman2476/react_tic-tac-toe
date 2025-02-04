@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
   X 2. Rewrite Board component to render using two loops instead of hardcoding squares
   X 3. Toggle button for ascending/descending move list
   X 4. When someone wins, highlight the winning squares
-    5. Display coordinates for each move in move history list
+  X 5. Display coordinates for each move in move history list
     6. Make it pretty and personal
 */
 function Square({ value, onSquareClick, isHighlit }) {
@@ -30,7 +30,7 @@ function Board({ xIsNext, squares, onPlay}) {
         } else {
             nextSquares[index] = "O"
         }
-        onPlay(nextSquares)
+        onPlay(nextSquares, index)
     }
     const [winner, highlightSquares] = calculateWinner(squares)
     const boardRows = Array(3).fill(null).map((row, index) => {
@@ -66,19 +66,16 @@ function Board({ xIsNext, squares, onPlay}) {
 }
 
 export default function Game() {
-    const [history, setHistory] = useState([Array(9).fill(null)])
+    const [history, setHistory] = useState([[Array(9).fill(null)], 'start'])
     const [currentMove, setCurrentMove] = useState(0)
     const [listIsAscending, setListIsAscending] = useState(true)
     const xIsNext = currentMove % 2 === 0
-    const currentSquares = history[currentMove]
+    const currentSquares = history[currentMove][0]
 
-    // useEffect hook to print out entire history array for debugging
-    // useEffect(() => {
-    //     console.log(history)
-    // }, [history])
+    
 
-    function handlePlay(nextSquares) {
-        const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]
+    function handlePlay(nextSquares, nextIndex) {
+        const nextHistory = [...history.slice(0, currentMove + 1), [nextSquares, nextIndex]]
         setHistory(nextHistory)
         setCurrentMove(nextHistory.length - 1)
     }
@@ -89,23 +86,25 @@ export default function Game() {
 
     function handleToggle(){
         setListIsAscending(!listIsAscending)
-        console.log(listIsAscending)
     }
     const moves = history.map((squares, move) => {
         let description
+        console.log('moves const:', squares[1])
+        const coordinates = squares[1] === 'start'? '' : squareToCoordinates(squares[1])
         if (move === currentMove){
             if (move > 0){
                 return (
-                    <li key={move}>Current move: {move}</li>
+                    <li key={move}>Current move: {move} at {coordinates[0]},{coordinates[1]}</li>
                 ) 
             }
             return (
                 <li key={move}>Game start: make a move!</li>
             ) 
         }
-        
-        if (move > 0) {
-            description = 'Go to move #' + move
+        if (squares === 'start') return
+
+        if (move > 0 ) {
+            description = 'Go to move #' + move + ' at square ' + coordinates
         } else {
             description = 'Go to game start'
         }
@@ -116,8 +115,7 @@ export default function Game() {
         )
     })
     const reversedMoves = moves.toReversed()
-    console.log('moves', moves)
-    console.log('reversed moves', reversedMoves)
+    
     return (
         <div className='game'>
             <div className='game-board'>
@@ -155,4 +153,8 @@ function calculateWinner(squares) {
 
     }
     return ['Nobody', null]
+}
+
+function squareToCoordinates(square){
+    return [Math.floor(square/3), square%3]
 }
