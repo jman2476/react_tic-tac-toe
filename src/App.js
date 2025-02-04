@@ -64,6 +64,7 @@ function Board({ xIsNext, squares, onPlay}) {
 export default function Game() {
     const [history, setHistory] = useState([Array(9).fill(null)])
     const [currentMove, setCurrentMove] = useState(0)
+    const [listIsAscending, setListIsAscending] = useState(true)
     const xIsNext = currentMove % 2 === 0
     const currentSquares = history[currentMove]
 
@@ -82,6 +83,10 @@ export default function Game() {
         setCurrentMove(nextMove)
     }
 
+    function handleToggle(){
+        setListIsAscending(!listIsAscending)
+        console.log(listIsAscending)
+    }
     const moves = history.map((squares, move) => {
         let description
         if (move === currentMove){
@@ -94,7 +99,7 @@ export default function Game() {
                 <li key={move}>Game start: make a move!</li>
             ) 
         }
-
+        
         if (move > 0) {
             description = 'Go to move #' + move
         } else {
@@ -106,13 +111,17 @@ export default function Game() {
             </li>
         )
     })
+    const reversedMoves = moves.toReversed()
+    console.log('moves', moves)
+    console.log('reversed moves', reversedMoves)
     return (
         <div className='game'>
             <div className='game-board'>
                 <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
             </div>
             <div className='game-info'>
-                <ol>{moves}</ol>
+                <button className="toggle" onClick={handleToggle}>List direction</button>
+                <ol>{listIsAscending? moves : reversedMoves}</ol>
             </div>
         </div>
     )
