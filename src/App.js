@@ -3,16 +3,16 @@ import { useState, useEffect } from 'react'
 /* TODO: Add updates to the game:
   X 1. For current move, show "You are at move #" instead of button
   X 2. Rewrite Board component to render using two loops instead of hardcoding squares
-    3. Toggle button for ascending/descending move list
-    4. When someone wins, highlight the winning squares
+  X 3. Toggle button for ascending/descending move list
+  X 4. When someone wins, highlight the winning squares
     5. Display coordinates for each move in move history list
     6. Make it pretty and personal
 */
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, isHighlit }) {
 
     return (
         <button 
-            className="square"
+            className={isHighlit? 'winning-square square': 'square'}
             onClick={onSquareClick}
         >
             {value}
@@ -23,7 +23,7 @@ function Square({ value, onSquareClick }) {
 function Board({ xIsNext, squares, onPlay}) {
     console.log('Board component', squares)
     function handleClick(index) {
-        if (squares[index] || calculateWinner(squares)) return // returns from function if square is filled or a player has won
+        if (squares[index] || calculateWinner(squares)[0]) return // returns from function if square is filled or a player has won
         const nextSquares = squares.slice()
         if (xIsNext) {
             nextSquares[index] = "X"
@@ -32,13 +32,18 @@ function Board({ xIsNext, squares, onPlay}) {
         }
         onPlay(nextSquares)
     }
-
+    const [winner, highlightSquares] = calculateWinner(squares)
     const boardRows = Array(3).fill(null).map((row, index) => {
         const newRow = Array(3).fill().map((_, column) => {
             const squareIndex = index * 3 + column
-            return (
-                <Square key={squareIndex} value={squares[squareIndex]} onSquareClick={() => handleClick(squareIndex)}/>
+            if (!highlightSquares) {
+                return (
+                    <Square key={squareIndex} value={squares[squareIndex]} onSquareClick={() => handleClick(squareIndex)}/>
+            )} else {
+                return (
+                    <Square key={squareIndex} value={squares[squareIndex]} onSquareClick={() => handleClick(squareIndex)} isHighlit={highlightSquares.includes(squareIndex)}/>
             )
+            }
         })
         
         return (
@@ -46,7 +51,6 @@ function Board({ xIsNext, squares, onPlay}) {
         )
     })
 
-    const winner = calculateWinner(squares)
     let status;
     if (winner) {
         status = "Winner: " + winner
@@ -142,13 +146,13 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++){
         const [a, b, c] = lines[i]
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a]
+            return [squares[a], lines[i]]
         }
     }
 
     for (let i = 0; i < squares.length; i++){
-        if (!squares[i]) return null
+        if (!squares[i]) return [null, null]
 
     }
-    return 'Nobody'
+    return ['Nobody', null]
 }
