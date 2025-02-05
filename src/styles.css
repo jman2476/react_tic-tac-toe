@@ -113,6 +113,8 @@
   
   .winning-square {
     background-color: #b00b13;
+    color: #b00baa;
+    border-color: #b00b13;
   }
 
   .game-board {
