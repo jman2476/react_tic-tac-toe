@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
   X 4. When someone wins, highlight the winning squares
   X 5. Display coordinates for each move in move history list
     6. Make it pretty and personal
+    7. Add multidimensional time travel/multiple analysis lines
 */
 function Square({ value, onSquareClick, isHighlit }) {
 
@@ -123,7 +124,7 @@ export default function Game() {
             </div>
             <div className='game-info'>
                 <button className="toggle" onClick={handleToggle}>List direction</button>
-                <ol>{listIsAscending? moves : reversedMoves}</ol>
+                <ul>{listIsAscending? moves : reversedMoves}</ul>
             </div>
         </div>
     )
